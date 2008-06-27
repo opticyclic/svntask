@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<antlib>
+  <taskdef name="svn" classname="com.googlecode.svntask.SvnTask" />
+</antlib>

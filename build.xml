@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+
+<!--
+	$Id$
+	$URL$
+-->
+<project name="svntask" default="compile" basedir=".">
+
+	<property file="user.properties" />
+	<property file="${user.home}/build.properties" />
+	<property file="build.properties" />
+	<property file="jar.properties" />
+
+	<property name="base.dir" location="." />
+
+	<property name="build.dir" location="target" />
+	<property name="build.javadoc.dir" location="${build.dir}/api" />
+
+	<property name="build.debug" value="on" />
+	<property name="build.deprecation" value="on" />
+
+	<!-- ******************************************************** -->
+	<path id="svntask.classpath">
+		<fileset dir="${base.dir}/lib">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	<!-- ******************************************************** -->
+
+	<target name="javac" depends="init">
+		<mkdir dir="${build.dir}/classes"/>
+
+		<javac 
+			srcdir="${base.dir}/src"
+			destdir="${build.dir}/classes" 
+			includeAntRuntime="false"
+			debug="${build.debug}" 
+			deprecation="${build.deprecation}">
+			
+			<classpath refid="svntask.classpath"/>
+		</javac>
+
+		<copy file="${base.dir}/src/svntask.xml" todir="${build.dir}/classes/com/googlecode/svntask/" />	
+	</target>
+
+	<target name="jar" depends="javac, version">
+		<jar jarfile="${build.dir}/svntask.jar">
+			<fileset dir="${build.dir}/classes" />
+	
+			<manifest>
+				<attribute name="Specification-Version" value="${version}" />
+				<attribute name="Implementation-Version" value="${TODAY}" />
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="javadoc" depends="init">
+		<property name="javadoc.dir" location="${build.dir}/javadoc" />
+		<mkdir dir="${javadoc.dir}"/>
+
+		<javadoc
+			destdir="${javadoc.dir}"
+			packagenames="*"
+			author="true"
+			version="true"
+			Windowtitle="svntask Javadoc"
+		>
+			<classpath refid="svntask.classpath" />
+			<fileset dir="${base.dir}/src">
+				<exclude name="**/*.xml" />
+			</fileset>
+			<group title="svntask" packages="com.googlecode.svntask*"/>
+			<doctitle><![CDATA[<h1>svntask</h1>]]></doctitle>
+			<bottom><![CDATA[<i>Copyright &#169; ${YEAR} Jon Scott Stevens. All Rights Reserved. Build version: ${version}</i>]]></bottom>
+		</javadoc>
+	</target>
+
+	<target name="compile" depends="init, jar">
+	</target>
+
+	<target name="version">
+		<typedef resource="com/googlecode/svntask/svntask.xml">
+			<classpath>
+				<fileset dir="${base.dir}/lib">
+					<include name="svnkit.jar"/>
+				</fileset>
+				<pathelement path="${build.dir}/classes/"/>
+			</classpath>
+		</typedef>
+		<svn><info path="." revisionProperty="version" /></svn>
+	</target>
+
+	<target name="init">
+		<tstamp/>
+		<tstamp>
+			<format property="YEAR" pattern="yyyy" />
+		</tstamp>
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+</project>
