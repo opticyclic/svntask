@@ -87,7 +87,8 @@
 				<pathelement path="${build.dir}/classes/"/>
 			</classpath>
 		</typedef>
-		<svn><info path="." revisionProperty="version" /></svn>
+		<svn><info path="." revisionProperty="revisionVersion" /></svn>
+		<property name="version" value="${revisionVersion}" />
 	</target>
 
 	<target name="init">
@@ -99,6 +100,53 @@
 
 	<target name="clean">
 		<delete dir="${build.dir}" />
+	</target>
+	
+	<target name="init-dist">
+		<input addproperty="version" message="Version number?" />
+		<property name="dist.name" value="${name}-${version}" />
+	</target>
+
+	<target name="dist" depends="init-dist, clean, compile, javadoc">
+		<property name="build.dist.dir" location="${build.dir}/${ant.project.name}-${version}"/>
+		<property name="build.dist.zip" location="${build.dir}/${ant.project.name}-${version}.zip"/>
+
+		<copy todir="${build.dist.dir}">
+			<fileset dir="${build.dir}">
+				<include name="javadoc/**" />
+			</fileset>
+
+			<fileset dir=".">
+				<include name="README.html" />
+				<include name="LICENSE.txt" />
+				<include name="build.xml" />
+			</fileset>
+		</copy>
+
+		<copy todir="${build.dist.dir}">
+			<fileset dir="${build.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${build.dist.dir}/lib">
+			<fileset dir="lib">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${build.dist.dir}/src">
+			<fileset dir="${base.dir}/src">
+				<include name="**" />
+			</fileset>
+		</copy>
+		
+		<dirname property="build.dist.dir.dirname" file="${build.dist.dir}" />
+		<basename property="build.dist.dir.basename" file="${build.dist.dir}" />
+		
+		<zip zipfile="${build.dist.zip}" basedir="${build.dist.dir.dirname}">
+			<include name="${build.dist.dir.basename}/**" />
+		</zip>
 	</target>
 
 </project>
