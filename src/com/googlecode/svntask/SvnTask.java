@@ -22,7 +22,7 @@ public class SvnTask extends Task
 	private List<Command> commands = new ArrayList<Command>();
 	
 	/** */
-	private boolean failonerror;
+	private boolean failonerror = false;
 
 	/** */
 	private SVNClientManager manager = null;
@@ -58,7 +58,21 @@ public class SvnTask extends Task
 	{
 		super.init();
 
-		this.setupSvnKit();
+		try
+		{
+			this.setupSvnKit();
+		}
+		catch (Exception e)
+		{
+			if (this.isFailonerror())
+			{
+				throw new BuildException(e);
+			}
+			else
+			{
+				this.log(e.getMessage());
+			}
+		}
 	}
 
 	/** */
@@ -69,7 +83,7 @@ public class SvnTask extends Task
 		{
 			for (Command command : commands)
 			{
-				command.execute();
+				command.executeCommand();
 			}
 		}
 		catch (Exception e)

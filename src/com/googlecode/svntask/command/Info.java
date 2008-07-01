@@ -27,6 +27,9 @@ public class Info extends Command
 	@Override
 	public void execute() throws Exception
 	{
+		// Set the default property in ant in case we have an exception below.
+		this.getProject().setProperty(revisionProperty, "-1");
+
 		// Get the WC Client
 		SVNWCClient client = this.getTask().getSvnClient().getWCClient();
 
@@ -37,7 +40,7 @@ public class Info extends Command
 		SVNRevision revision = info.getRevision();
 		String revisionNumber = new Long(revision.getNumber()).toString();
 
-		// Set the property in ant
+		// Set the computed property in ant
 		this.getProject().setProperty(revisionProperty, revisionNumber);
 	}
 
