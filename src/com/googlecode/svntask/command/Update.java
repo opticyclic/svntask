@@ -22,11 +22,15 @@ public class Update extends Command
 	@Override
 	public void execute() throws Exception
 	{
+		File filePath = new File(path);
+
+		this.getTask().log("update " + filePath.getCanonicalPath());
+
 		// Get the Update Client
 		SVNUpdateClient client = this.getTask().getSvnClient().getUpdateClient();
 
 		// Execute svn info
-		client.doUpdate(new File(path), SVNRevision.HEAD, this.recursive, this.force);
+		client.doUpdate(filePath, SVNRevision.HEAD, this.recursive, this.force);
 	}
 
 	@Override

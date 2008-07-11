@@ -27,6 +27,10 @@ public class Info extends Command
 	@Override
 	public void execute() throws Exception
 	{
+		File filePath = new File(path);
+
+		this.getTask().log("info " + filePath.getCanonicalPath());
+
 		// Set the default property in ant in case we have an exception below.
 		this.getProject().setProperty(revisionProperty, "-1");
 
@@ -34,7 +38,7 @@ public class Info extends Command
 		SVNWCClient client = this.getTask().getSvnClient().getWCClient();
 
 		// Execute svn info
-		SVNInfo info = client.doInfo(new File(path), SVNRevision.WORKING);
+		SVNInfo info = client.doInfo(filePath, SVNRevision.WORKING);
 
 		// Get the revision #
 		SVNRevision revision = info.getRevision();
