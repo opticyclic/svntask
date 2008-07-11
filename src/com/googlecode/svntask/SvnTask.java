@@ -11,6 +11,7 @@ import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 
 import com.googlecode.svntask.command.Info;
+import com.googlecode.svntask.command.Update;
 
 /**
  * 
@@ -31,6 +32,12 @@ public class SvnTask extends Task
 	public void addInfo(Info info)
 	{
 		addCommand(info);
+	}
+
+	/** */
+	public void addUpdate(Update update)
+	{
+		addCommand(update);
 	}
 
 	/** */
