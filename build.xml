@@ -50,6 +50,7 @@
 			<manifest>
 				<attribute name="Specification-Version" value="${version}" />
 				<attribute name="Implementation-Version" value="${TODAY}" />
+				<attribute name="Main-Class" value="com.googlecode.svntask.Version" />
 			</manifest>
 		</jar>
 	</target>
