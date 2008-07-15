@@ -19,7 +19,9 @@ import com.googlecode.svntask.Command;
  * 	revisionProperty = svn.info.revision
  *  urlProperty = svn.info.url
  *  repositoryRootUrlProperty = svn.info.repositoryRootUrl
- * 
+ *  authorProperty = svn.info.author
+ *  committedDateProperty = svn.info.committedDate
+ *
  * @author jonstevens
  */
 public class Info extends Command
