@@ -71,6 +71,9 @@ public class Info extends Command
 	@Override
 	protected void validateAttributes() throws Exception
 	{
+		if (path == null)
+			throw new Exception("path cannot be null");
+
 		if (revisionProperty == null)
 			revisionProperty = SVN_INFO_REVISION;
 
@@ -85,9 +88,6 @@ public class Info extends Command
 
 		if (committedDateProperty == null)
 			committedDateProperty = SVN_COMMITTED_DATE;
-
-		if (path == null)
-			throw new Exception("path cannot be null");
 	}
 
 	public void setPath(String path)
