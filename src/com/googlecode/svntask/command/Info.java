@@ -29,8 +29,8 @@ public class Info extends Command
 	public static final String SVN_INFO_URL = "svn.info.url";
 	public static final String SVN_INFO_REPOSITORY_ROOT_URL = "svn.info.repositoryRootUrl";
 	public static final String SVN_INFO_REVISION = "svn.info.revision";
-	public static final String SVN_AUTHOR = "svn.info.author";
-	public static final String SVN_COMMITTED_DATE = "svn.info.committedDate";
+	public static final String SVN_INFO_AUTHOR = "svn.info.author";
+	public static final String SVN_INFO_COMMITTED_DATE = "svn.info.committedDate";
 
 	private String path;
 	private String revisionProperty;
@@ -39,6 +39,7 @@ public class Info extends Command
 	private String authorProperty;
 	private String committedDateProperty;
 	
+	/** */
 	@Override
 	public void execute() throws Exception
 	{
@@ -70,6 +71,7 @@ public class Info extends Command
 		this.getProject().setProperty(committedDateProperty, DateFormat.getInstance().format(committedDate));
 	}
 
+	/** */
 	@Override
 	protected void validateAttributes() throws Exception
 	{
@@ -86,12 +88,15 @@ public class Info extends Command
 			repositoryRootUrlProperty = SVN_INFO_REPOSITORY_ROOT_URL;
 
 		if (authorProperty == null)
-			authorProperty = SVN_AUTHOR;
+			authorProperty = SVN_INFO_AUTHOR;
 
 		if (committedDateProperty == null)
-			committedDateProperty = SVN_COMMITTED_DATE;
+			committedDateProperty = SVN_INFO_COMMITTED_DATE;
 	}
 
+	/**
+	 * the path to the file
+	 */
 	public void setPath(String path)
 	{
 		this.path = path;
