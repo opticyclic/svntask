@@ -151,7 +151,7 @@ public class Info extends Command
 	}
 
 	/**
-	 * @param committedRevisionProperty; The committedRevisionProperty; to set. defaults to svn.info.committedRevision
+	 * @param committedRevisionProperty The committedRevisionProperty; to set. defaults to svn.info.committedRevision
 	 */
 	public void setCommittedRevisionProperty(String committedRevisionProperty)
 	{

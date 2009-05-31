@@ -188,7 +188,7 @@ public class Status extends Command
 	}
 
 	/**
-	 * @param committedRevisionProperty; The committedRevisionProperty; to set. defaults to svn.status.committedRevision
+	 * @param committedRevisionProperty The committedRevisionProperty; to set. defaults to svn.status.committedRevision
 	 */
 	public void setCommittedRevisionProperty(String committedRevisionProperty)
 	{
@@ -196,7 +196,7 @@ public class Status extends Command
 	}
 
 	/**
-	 * @param remoteRevisionProperty; The remoteRevisionProperty; to set. defaults to svn.status.remoteRevision
+	 * @param remoteRevisionProperty The remoteRevisionProperty; to set. defaults to svn.status.remoteRevision
 	 */
 	public void setRemoteRevisionProperty(String remoteRevisionProperty)
 	{
