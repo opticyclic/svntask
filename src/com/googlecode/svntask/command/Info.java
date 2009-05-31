@@ -14,13 +14,14 @@ import com.googlecode.svntask.Command;
 
 /**
  * Used for executing svn info
- * 
+ *
  * Available properties to set are:
  * 	revisionProperty = svn.info.revision
  *  urlProperty = svn.info.url
  *  repositoryRootUrlProperty = svn.info.repositoryRootUrl
  *  authorProperty = svn.info.author
  *  committedDateProperty = svn.info.committedDate
+ *  committedRevision = svn.info.committedRevision
  *
  * @author jonstevens
  */
@@ -31,6 +32,7 @@ public class Info extends Command
 	public static final String SVN_INFO_REVISION = "svn.info.revision";
 	public static final String SVN_INFO_AUTHOR = "svn.info.author";
 	public static final String SVN_INFO_COMMITTED_DATE = "svn.info.committedDate";
+	public static final String SVN_INFO_COMMITTED_REVISION = "svn.info.committedRevision";
 
 	private String path;
 	private String revisionProperty;
@@ -38,17 +40,18 @@ public class Info extends Command
 	private String repositoryRootUrlProperty;
 	private String authorProperty;
 	private String committedDateProperty;
-	
+	private String committedRevisionProperty;
+
 	/** */
 	@Override
 	public void execute() throws Exception
 	{
-		File filePath = new File(path);
+		File filePath = new File(this.path);
 
 		this.getTask().log("info " + filePath.getCanonicalPath());
 
 		// Set the default property in ant in case we have an exception below.
-		this.getProject().setProperty(revisionProperty, "-1");
+		this.getProject().setProperty(this.revisionProperty, "-1");
 
 		// Get the WC Client
 		SVNWCClient client = this.getTask().getSvnClient().getWCClient();
@@ -58,40 +61,45 @@ public class Info extends Command
 
 		// Get the interesting info data
 		SVNRevision revision = info.getRevision();
+		SVNRevision committedRevision = info.getCommittedRevision();
 		SVNURL url = info.getURL();
 		SVNURL repositoryRootUrl = info.getRepositoryRootURL();
 		String author = info.getAuthor();
 		Date committedDate = info.getCommittedDate();
-		
+
 		// Set the computed properties in ant
-		this.getProject().setProperty(revisionProperty, new Long(revision.getNumber()).toString());
-		this.getProject().setProperty(urlProperty, url.toDecodedString());
-		this.getProject().setProperty(repositoryRootUrlProperty, repositoryRootUrl.toDecodedString());
-		this.getProject().setProperty(authorProperty, author);
-		this.getProject().setProperty(committedDateProperty, DateFormat.getInstance().format(committedDate));
+		this.getProject().setProperty(this.revisionProperty, new Long(revision.getNumber()).toString());
+		this.getProject().setProperty(this.urlProperty, url.toDecodedString());
+		this.getProject().setProperty(this.repositoryRootUrlProperty, repositoryRootUrl.toDecodedString());
+		this.getProject().setProperty(this.authorProperty, author);
+		this.getProject().setProperty(this.committedDateProperty, DateFormat.getInstance().format(committedDate));
+		this.getProject().setProperty(this.committedRevisionProperty, new Long(committedRevision.getNumber()).toString());
 	}
 
 	/** */
 	@Override
 	protected void validateAttributes() throws Exception
 	{
-		if (path == null)
+		if (this.path == null)
 			throw new Exception("path cannot be null");
 
-		if (revisionProperty == null)
-			revisionProperty = SVN_INFO_REVISION;
+		if (this.revisionProperty == null)
+			this.revisionProperty = SVN_INFO_REVISION;
 
-		if (urlProperty == null)
-			urlProperty = SVN_INFO_URL;
-		
-		if (repositoryRootUrlProperty == null)
-			repositoryRootUrlProperty = SVN_INFO_REPOSITORY_ROOT_URL;
+		if (this.urlProperty == null)
+			this.urlProperty = SVN_INFO_URL;
 
-		if (authorProperty == null)
-			authorProperty = SVN_INFO_AUTHOR;
+		if (this.repositoryRootUrlProperty == null)
+			this.repositoryRootUrlProperty = SVN_INFO_REPOSITORY_ROOT_URL;
 
-		if (committedDateProperty == null)
-			committedDateProperty = SVN_INFO_COMMITTED_DATE;
+		if (this.authorProperty == null)
+			this.authorProperty = SVN_INFO_AUTHOR;
+
+		if (this.committedDateProperty == null)
+			this.committedDateProperty = SVN_INFO_COMMITTED_DATE;
+
+		if (this.committedRevisionProperty == null)
+			this.committedRevisionProperty = SVN_INFO_COMMITTED_REVISION;
 	}
 
 	/**
@@ -109,7 +117,7 @@ public class Info extends Command
 	{
 		this.revisionProperty = revisionProperty;
 	}
-	
+
 	/**
 	 * @param urlProperty The urlProperty to set. defaults to svn.info.url
 	 */
@@ -141,4 +149,13 @@ public class Info extends Command
 	{
 		this.committedDateProperty = committedDateProperty;
 	}
+
+	/**
+	 * @param committedRevisionProperty; The committedRevisionProperty; to set. defaults to svn.info.committedRevision
+	 */
+	public void setCommittedRevisionProperty(String committedRevisionProperty)
+	{
+		this.committedRevisionProperty = committedRevisionProperty;
+	}
+
 }
