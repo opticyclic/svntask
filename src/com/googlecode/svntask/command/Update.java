@@ -2,6 +2,7 @@ package com.googlecode.svntask.command;
 
 import java.io.File;
 
+import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
@@ -10,7 +11,7 @@ import com.googlecode.svntask.Command;
 
 /**
  * Used for executing svn update. Defaults to recursive and force == true.
- * 
+ *
  * @author jonstevens
  */
 public class Update extends Command
@@ -22,7 +23,7 @@ public class Update extends Command
 	@Override
 	public void execute() throws Exception
 	{
-		File filePath = new File(path);
+		File filePath = new File(this.path);
 
 		this.getTask().log("update " + filePath.getCanonicalPath());
 
@@ -30,13 +31,13 @@ public class Update extends Command
 		SVNUpdateClient client = this.getTask().getSvnClient().getUpdateClient();
 
 		// Execute svn info
-		client.doUpdate(filePath, SVNRevision.HEAD, this.recursive, this.force);
+		client.doUpdate(filePath, SVNRevision.HEAD, SVNDepth.INFINITY, this.recursive, this.force);
 	}
 
 	@Override
 	protected void validateAttributes() throws Exception
 	{
-		if (path == null)
+		if (this.path == null)
 			throw new Exception("path cannot be null");
 	}
 
