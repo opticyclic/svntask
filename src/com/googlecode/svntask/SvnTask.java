@@ -12,41 +12,48 @@ import org.tmatesoft.svn.core.wc.SVNClientManager;
 
 import com.googlecode.svntask.command.Info;
 import com.googlecode.svntask.command.Status;
+import com.googlecode.svntask.command.Switch;
 import com.googlecode.svntask.command.Update;
 
 /**
- * 
+ *
  * @author jonstevens
  */
 public class SvnTask extends Task
 {
 	/** */
 	private List<Command> commands = new ArrayList<Command>();
-	
+
 	/** */
 	private boolean failonerror = false;
 
 	/** */
 	private SVNClientManager manager = null;
-	
+
 	/** */
 	public void addInfo(Info info)
 	{
-		addCommand(info);
+		this.addCommand(info);
 	}
 
 	/** */
 	public void addUpdate(Update update)
 	{
-		addCommand(update);
+		this.addCommand(update);
 	}
 
 	/** */
 	public void addStatus(Status status)
 	{
-		addCommand(status);
+		this.addCommand(status);
 	}
-	
+
+	/** */
+	public void addSwitch(Switch switchTask)
+	{
+		this.addCommand(switchTask);
+	}
+
 	/** */
 	private void addCommand(Command command)
 	{
@@ -57,7 +64,7 @@ public class SvnTask extends Task
 	/** */
 	public boolean isFailonerror()
 	{
-		return failonerror;
+		return this.failonerror;
 	}
 
 	/** */
@@ -95,7 +102,7 @@ public class SvnTask extends Task
 	{
 		try
 		{
-			for (Command command : commands)
+			for (Command command : this.commands)
 			{
 				command.executeCommand();
 			}
@@ -135,6 +142,6 @@ public class SvnTask extends Task
 		/*
 		 * Create the client manager with defaults
 		 */
-		manager = SVNClientManager.newInstance();
+		this.manager = SVNClientManager.newInstance();
 	}
 }
