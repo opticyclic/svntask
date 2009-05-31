@@ -10,6 +10,8 @@ import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 
+import com.googlecode.svntask.command.Add;
+import com.googlecode.svntask.command.Commit;
 import com.googlecode.svntask.command.Info;
 import com.googlecode.svntask.command.Status;
 import com.googlecode.svntask.command.Switch;
@@ -31,15 +33,21 @@ public class SvnTask extends Task
 	private SVNClientManager manager = null;
 
 	/** */
-	public void addInfo(Info info)
+	public void addAdd(Add add)
 	{
-		this.addCommand(info);
+		this.addCommand(add);
 	}
 
 	/** */
-	public void addUpdate(Update update)
+	public void addCommit(Commit commit)
 	{
-		this.addCommand(update);
+		this.addCommand(commit);
+	}
+
+	/** */
+	public void addInfo(Info info)
+	{
+		this.addCommand(info);
 	}
 
 	/** */
@@ -52,6 +60,12 @@ public class SvnTask extends Task
 	public void addSwitch(Switch switchTask)
 	{
 		this.addCommand(switchTask);
+	}
+
+	/** */
+	public void addUpdate(Update update)
+	{
+		this.addCommand(update);
 	}
 
 	/** */
