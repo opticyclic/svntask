@@ -14,13 +14,22 @@ import com.googlecode.svntask.Command;
 
 /**
  * Used for executing svn status
- * 
+ *
  * Available properties to set are:
- * 	revisionProperty = svn.info.revision
- *  urlProperty = svn.info.url
- *  repositoryRootUrlProperty = svn.info.repositoryRootUrl
- *  authorProperty = svn.info.author
- *  committedDateProperty = svn.info.committedDate
+ *  committedRevisionProperty = svn.status.committedRevision
+ *  remoteRevisionProperty = svn.status.remoteRevision
+ *  revisionProperty = svn.status.revision
+ *  copyFromRevisionProperty = svn.status.copyFromRevision
+ *  remotePropertiesStatusProperty = svn.status.remotePropertiesStatus
+ *  remoteContentsStatusProperty = svn.status.remoteContentsStatus
+ *  propertiesStatusProperty = svn.status.propertiesStatus
+ *  contentsStatusProperty = svn.status.contentsStatus
+ *  remoteDateProperty = svn.status.remoteDate
+ *  committedDateProperty = svn.status.committedDate
+ *  workingContentsDateProperty = svn.status.workingContentsDate
+ *  workingPropertiesDateProperty = svn.status.workingPropertiesDate
+ *  authorProperty = svn.status.author
+ *  remoteAuthorProperty = svn.status.remoteAuthor
  *
  * @author jonstevens
  */
@@ -39,7 +48,7 @@ public class Status extends Command
 	private String remoteContentsStatusProperty;
 	private String propertiesStatusProperty;
 	private String contentsStatusProperty;
-	
+
 	private String remoteDateProperty;
 	private String committedDateProperty;
 	private String workingContentsDateProperty;
@@ -52,12 +61,12 @@ public class Status extends Command
 	@Override
 	public void execute() throws Exception
 	{
-		File filePath = new File(path);
+		File filePath = new File(this.path);
 
 		this.getTask().log("status " + filePath.getCanonicalPath());
 
 		// Set the default property in ant in case we have an exception below.
-		this.getProject().setProperty(revisionProperty, "-1");
+		this.getProject().setProperty(this.revisionProperty, "-1");
 
 		// Get the WC Client
 		SVNStatusClient client = this.getTask().getSvnClient().getStatusClient();
@@ -75,72 +84,79 @@ public class Status extends Command
 		SVNStatusType remoteContentsStatus = status.getRemoteContentsStatus();
 		SVNStatusType propertiesStatus = status.getPropertiesStatus();
 		SVNStatusType contentsStatus = status.getContentsStatus();
-		
+
 		Date remoteDate = status.getRemoteDate();
 		Date committedDate = status.getCommittedDate();
 		Date workingContentsDate = status.getWorkingContentsDate();
 		Date workingPropertiesDate = status.getWorkingPropertiesDate();
-		
+
 		String author = status.getAuthor();
 		String remoteAuthor = status.getRemoteAuthor();
-		
+
 		// Set the computed properties in ant
-		this.getProject().setProperty(committedRevisionProperty, new Long(committedRevision.getNumber()).toString());
-		this.getProject().setProperty(remoteRevisionProperty, new Long(remoteRevision.getNumber()).toString());
-		this.getProject().setProperty(revisionProperty, new Long(revision.getNumber()).toString());
-		this.getProject().setProperty(copyFromRevisionProperty, new Long(copyFromRevision.getNumber()).toString());
+		this.getProject().setProperty(this.committedRevisionProperty, new Long(committedRevision.getNumber()).toString());
 
-		this.getProject().setProperty(remotePropertiesStatusProperty, remotePropertiesStatus.toString());
-		this.getProject().setProperty(remoteContentsStatusProperty, remoteContentsStatus.toString());
-		this.getProject().setProperty(propertiesStatusProperty, propertiesStatus.toString());
-		this.getProject().setProperty(contentsStatusProperty, contentsStatus.toString());
-		
-		this.getProject().setProperty(remoteDateProperty, DateFormat.getInstance().format(remoteDate));
-		this.getProject().setProperty(committedDateProperty, DateFormat.getInstance().format(committedDate));
-		this.getProject().setProperty(workingContentsDateProperty, DateFormat.getInstance().format(workingContentsDate));
-		this.getProject().setProperty(workingPropertiesDateProperty, DateFormat.getInstance().format(workingPropertiesDate));
+		if (remoteRevision != null)
+			this.getProject().setProperty(this.remoteRevisionProperty, new Long(remoteRevision.getNumber()).toString());
 
-		this.getProject().setProperty(authorProperty, author);
-		this.getProject().setProperty(remoteAuthorProperty, remoteAuthor);
+		this.getProject().setProperty(this.revisionProperty, new Long(revision.getNumber()).toString());
+		this.getProject().setProperty(this.copyFromRevisionProperty, new Long(copyFromRevision.getNumber()).toString());
+
+		this.getProject().setProperty(this.remotePropertiesStatusProperty, remotePropertiesStatus.toString());
+		this.getProject().setProperty(this.remoteContentsStatusProperty, remoteContentsStatus.toString());
+		this.getProject().setProperty(this.propertiesStatusProperty, propertiesStatus.toString());
+		this.getProject().setProperty(this.contentsStatusProperty, contentsStatus.toString());
+
+		if (remoteDate != null)
+			this.getProject().setProperty(this.remoteDateProperty, DateFormat.getInstance().format(remoteDate));
+
+		this.getProject().setProperty(this.committedDateProperty, DateFormat.getInstance().format(committedDate));
+		this.getProject().setProperty(this.workingContentsDateProperty, DateFormat.getInstance().format(workingContentsDate));
+		this.getProject().setProperty(this.workingPropertiesDateProperty, DateFormat.getInstance().format(workingPropertiesDate));
+
+		this.getProject().setProperty(this.authorProperty, author);
+
+		if (remoteAuthor != null)
+			this.getProject().setProperty(this.remoteAuthorProperty, remoteAuthor);
 	}
 
 	@Override
 	protected void validateAttributes() throws Exception
 	{
-		if (path == null)
+		if (this.path == null)
 			throw new Exception("path cannot be null");
 
-		if (committedRevisionProperty == null)
-			committedRevisionProperty = "svn.status.committedRevision";
-		if (remoteRevisionProperty == null)
-			remoteRevisionProperty = "svn.status.remoteRevision";
-		if (revisionProperty == null)
-			revisionProperty = "svn.status.revision";
-		if (copyFromRevisionProperty == null)
-			copyFromRevisionProperty = "svn.status.copyFromRevision";
+		if (this.committedRevisionProperty == null)
+			this.committedRevisionProperty = "svn.status.committedRevision";
+		if (this.remoteRevisionProperty == null)
+			this.remoteRevisionProperty = "svn.status.remoteRevision";
+		if (this.revisionProperty == null)
+			this.revisionProperty = "svn.status.revision";
+		if (this.copyFromRevisionProperty == null)
+			this.copyFromRevisionProperty = "svn.status.copyFromRevision";
 
-		if (remotePropertiesStatusProperty == null)
-			remotePropertiesStatusProperty = "svn.status.remotePropertiesStatus";
-		if (remoteContentsStatusProperty == null)
-			remoteContentsStatusProperty = "svn.status.remoteContentsStatus";
-		if (propertiesStatusProperty == null)
-			propertiesStatusProperty = "svn.status.propertiesStatus";
-		if (contentsStatusProperty == null)
-			contentsStatusProperty = "svn.status.contentsStatus";
+		if (this.remotePropertiesStatusProperty == null)
+			this.remotePropertiesStatusProperty = "svn.status.remotePropertiesStatus";
+		if (this.remoteContentsStatusProperty == null)
+			this.remoteContentsStatusProperty = "svn.status.remoteContentsStatus";
+		if (this.propertiesStatusProperty == null)
+			this.propertiesStatusProperty = "svn.status.propertiesStatus";
+		if (this.contentsStatusProperty == null)
+			this.contentsStatusProperty = "svn.status.contentsStatus";
 
-		if (remoteDateProperty == null)
-			remoteDateProperty = "svn.status.remoteDate";
-		if (committedDateProperty == null)
-			committedDateProperty = "svn.status.committedDate";
-		if (workingContentsDateProperty == null)
-			workingContentsDateProperty = "svn.status.workingContentsDate";
-		if (workingPropertiesDateProperty == null)
-			workingPropertiesDateProperty = "svn.status.workingPropertiesDate";
-		
-		if (authorProperty == null)
-			authorProperty = "svn.status.author";
-		if (remoteAuthorProperty == null)
-			remoteAuthorProperty = "svn.status.remoteAuthor";
+		if (this.remoteDateProperty == null)
+			this.remoteDateProperty = "svn.status.remoteDate";
+		if (this.committedDateProperty == null)
+			this.committedDateProperty = "svn.status.committedDate";
+		if (this.workingContentsDateProperty == null)
+			this.workingContentsDateProperty = "svn.status.workingContentsDate";
+		if (this.workingPropertiesDateProperty == null)
+			this.workingPropertiesDateProperty = "svn.status.workingPropertiesDate";
+
+		if (this.authorProperty == null)
+			this.authorProperty = "svn.status.author";
+		if (this.remoteAuthorProperty == null)
+			this.remoteAuthorProperty = "svn.status.remoteAuthor";
 	}
 
 	/**
@@ -152,8 +168,8 @@ public class Status extends Command
 	}
 
 	/**
-	 * to check up the status of the item in the repository, 
-	 * that will tell if the local item is out-of-date (like '-u' 
+	 * to check up the status of the item in the repository,
+	 * that will tell if the local item is out-of-date (like '-u'
 	 * option in the SVN client's 'svn status' command)
 	 * default true.
 	 */
@@ -161,8 +177,8 @@ public class Status extends Command
 	{
 		this.remote = remote;
 	}
-	
-	/** 
+
+	/**
 	 * ignore externals definitions
 	 * default false.
 	 */
@@ -170,33 +186,105 @@ public class Status extends Command
 	{
 		this.ignoreExternals = ignoreExternals;
 	}
-	
+
 	/**
-	 * @param revisionProperty The revisionProperty to set. defaults to svn.info.revision
+	 * @param committedRevisionProperty; The committedRevisionProperty; to set. defaults to svn.status.committedRevision
+	 */
+	public void setCommittedRevisionProperty(String committedRevisionProperty)
+	{
+		this.committedRevisionProperty = committedRevisionProperty;
+	}
+
+	/**
+	 * @param remoteRevisionProperty; The remoteRevisionProperty; to set. defaults to svn.status.remoteRevision
+	 */
+	public void setRemoteRevisionProperty(String remoteRevisionProperty)
+	{
+		this.remoteRevisionProperty = remoteRevisionProperty;
+	}
+
+	/**
+	 * @param revisionProperty The revisionProperty to set. defaults to svn.status.revision
 	 */
 	public void setRevisionProperty(String revisionProperty)
 	{
 		this.revisionProperty = revisionProperty;
 	}
-	
-//	/**
-//	 * @param urlProperty The urlProperty to set. defaults to svn.info.url
-//	 */
-//	public void setUrlProperty(String urlProperty)
-//	{
-//		this.urlProperty = urlProperty;
-//	}
-//
-//	/**
-//	 * @param repositoryRootUrlProperty The repositoryRootUrlProperty to set. defaults to svn.info.repositoryRootUrl
-//	 */
-//	public void setRepositoryRootUrlProperty(String repositoryRootUrlProperty)
-//	{
-//		this.repositoryRootUrlProperty = repositoryRootUrlProperty;
-//	}
 
 	/**
-	 * @param authorProperty The authorProperty to set. defaults to svn.info.author
+	 * @param copyFromRevisionProperty The copyFromRevisionProperty to set. defaults to svn.status.copyFromRevision
+	 */
+	public void setCopyFromRevisionProperty(String copyFromRevisionProperty)
+	{
+		this.copyFromRevisionProperty = copyFromRevisionProperty;
+	}
+
+	/**
+	 * @param remotePropertiesStatusProperty The remotePropertiesStatusProperty to set. defaults to svn.status.remotePropertiesStatus
+	 */
+	public void setRemotePropertiesStatusProperty(String remotePropertiesStatusProperty)
+	{
+		this.remotePropertiesStatusProperty = remotePropertiesStatusProperty;
+	}
+
+	/**
+	 * @param remoteContentsStatusProperty The remoteContentsStatusProperty to set. defaults to svn.status.remoteContentsStatus
+	 */
+	public void setRemoteContentsStatusProperty(String remoteContentsStatusProperty)
+	{
+		this.remoteContentsStatusProperty = remoteContentsStatusProperty;
+	}
+
+	/**
+	 * @param propertiesStatusProperty The propertiesStatusProperty to set. defaults to svn.status.propertiesStatus
+	 */
+	public void setPropertiesStatusProperty(String propertiesStatusProperty)
+	{
+		this.propertiesStatusProperty = propertiesStatusProperty;
+	}
+
+	/**
+	 * @param contentsStatusProperty The contentsStatusProperty to set. defaults to svn.status.contentsStatus
+	 */
+	public void setContentsStatusProperty(String contentsStatusProperty)
+	{
+		this.contentsStatusProperty = contentsStatusProperty;
+	}
+
+	/**
+	 * @param remoteDateProperty The remoteDateProperty to set. defaults to svn.status.remoteDate
+	 */
+	public void setRemoteDateProperty(String remoteDateProperty)
+	{
+		this.remoteDateProperty = remoteDateProperty;
+	}
+
+	/**
+	 * @param committedDateProperty The committedDateProperty to set. defaults to svn.status.committedDate
+	 */
+	public void setCommittedDateProperty(String committedDateProperty)
+	{
+		this.committedDateProperty = committedDateProperty;
+	}
+
+	/**
+	 * @param workingContentsDateProperty The workingContentsDateProperty to set. defaults to svn.status.workingContentsDate
+	 */
+	public void setWorkingContentsDateProperty(String workingContentsDateProperty)
+	{
+		this.workingContentsDateProperty = workingContentsDateProperty;
+	}
+
+	/**
+	 * @param workingPropertiesDateProperty The workingPropertiesDateProperty to set. defaults to svn.status.workingPropertiesDate
+	 */
+	public void setWorkingPropertiesDateProperty(String workingPropertiesDateProperty)
+	{
+		this.workingPropertiesDateProperty = workingPropertiesDateProperty;
+	}
+
+	/**
+	 * @param authorProperty The authorProperty to set. defaults to svn.status.author
 	 */
 	public void setAuthorProperty(String authorProperty)
 	{
@@ -204,10 +292,10 @@ public class Status extends Command
 	}
 
 	/**
-	 * @param committedDateProperty The committedDateProperty to set. defaults to svn.info.committedDate
+	 * @param remoteAuthorProperty The remoteAuthorProperty to set. defaults to svn.status.remoteAuthor
 	 */
-	public void setCommittedDateProperty(String committedDateProperty)
+	public void setRemoteAuthorProperty(String remoteAuthorProperty)
 	{
-		this.committedDateProperty = committedDateProperty;
+		this.remoteAuthorProperty = remoteAuthorProperty;
 	}
 }
