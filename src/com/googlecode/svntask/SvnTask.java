@@ -13,6 +13,7 @@ import org.tmatesoft.svn.core.wc.SVNClientManager;
 import com.googlecode.svntask.command.Add;
 import com.googlecode.svntask.command.Commit;
 import com.googlecode.svntask.command.Info;
+import com.googlecode.svntask.command.Ls;
 import com.googlecode.svntask.command.Status;
 import com.googlecode.svntask.command.Switch;
 import com.googlecode.svntask.command.Update;
@@ -48,6 +49,12 @@ public class SvnTask extends Task
 	public void addInfo(Info info)
 	{
 		this.addCommand(info);
+	}
+
+	/** */
+	public void addLs(Ls ls)
+	{
+		this.addCommand(ls);
 	}
 
 	/** */
