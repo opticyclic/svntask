@@ -16,11 +16,14 @@ import com.googlecode.svntask.Command;
  */
 public class Update extends Command
 {
+	public static final String SVN_UPDATE_REVISION = "svn.update.revision";
+
 	private String path;
 	private SVNRevision revision = SVNRevision.HEAD;
 	private SVNDepth depth = SVNDepth.INFINITY;
 	private boolean recursive = true;
 	private boolean force = true;
+	private String revisionProperty;
 
 	@Override
 	public void execute() throws Exception
@@ -33,7 +36,10 @@ public class Update extends Command
 		SVNUpdateClient client = this.getTask().getSvnClient().getUpdateClient();
 
 		// Execute svn info
-		client.doUpdate(filePath, this.revision, this.depth, this.recursive, this.force);
+		long revision = client.doUpdate(filePath, this.revision, this.depth, this.recursive, this.force);
+
+		// Set the computed properties in ant
+		this.getProject().setProperty(this.revisionProperty, new Long(revision).toString());
 	}
 
 	/** */
@@ -42,6 +48,9 @@ public class Update extends Command
 	{
 		if (this.path == null)
 			throw new Exception("path cannot be null");
+
+		if (this.revisionProperty == null)
+			this.revisionProperty = SVN_UPDATE_REVISION;
 	}
 
 	/** */
@@ -72,5 +81,11 @@ public class Update extends Command
 	public void setForce(boolean force)
 	{
 		this.force = force;
+	}
+
+	/** */
+	public void setRevisionProperty(String revisionProperty)
+	{
+		this.revisionProperty = revisionProperty;
 	}
 }

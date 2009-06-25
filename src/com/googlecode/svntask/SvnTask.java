@@ -13,6 +13,7 @@ import org.tmatesoft.svn.core.wc.SVNClientManager;
 import com.googlecode.svntask.command.Add;
 import com.googlecode.svntask.command.Commit;
 import com.googlecode.svntask.command.Info;
+import com.googlecode.svntask.command.Log;
 import com.googlecode.svntask.command.Ls;
 import com.googlecode.svntask.command.Status;
 import com.googlecode.svntask.command.Switch;
@@ -25,7 +26,7 @@ import com.googlecode.svntask.command.Update;
 public class SvnTask extends Task
 {
 	/** */
-	private List<Command> commands = new ArrayList<Command>();
+	private final List<Command> commands = new ArrayList<Command>();
 
 	/** */
 	private boolean failonerror = false;
@@ -49,6 +50,12 @@ public class SvnTask extends Task
 	public void addInfo(Info info)
 	{
 		this.addCommand(info);
+	}
+
+	/** */
+	public void addLog(Log log)
+	{
+		this.addCommand(log);
 	}
 
 	/** */
