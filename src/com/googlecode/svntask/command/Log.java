@@ -7,6 +7,7 @@ import org.tmatesoft.svn.core.ISVNLogEntryHandler;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNLogEntryPath;
+import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
@@ -18,6 +19,7 @@ import com.googlecode.svntask.Command;
  * revision and the date format is different.
  *
  * Includes these optional params:
+ * url: use a svn url rather than a path to a working copy
  * startRevision: revision number or "HEAD" or "BASE" (defaults to "HEAD")
  * endRevision: revision number or "HEAD" or "BASE" (defaults to "BASE")
  * limit: max number of log entries to get, 0 for all (defaults to 0)
@@ -34,6 +36,7 @@ public class Log extends Command
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
 	private static final String ITEM_SEPARATOR = "----------------------------------------------------------------------------";
 
+	private String url;
 	private String path;
 	private String logProperty;
 	private String startRevision;
@@ -46,16 +49,33 @@ public class Log extends Command
 	@Override
 	public void execute() throws Exception
 	{
-		File filePath = new File(this.path);
-
 		SVNLogClient client = this.getTask().getSvnClient().getLogClient();
 		SVNRevision start = SVNRevision.parse(this.startRevision);
 		SVNRevision end = SVNRevision.parse(this.endRevision);
 
-		this.getTask().log("log " + filePath.getCanonicalPath() + " " + start.toString() + ":" + end.toString());
-
 		final StringBuilder logBuffer = new StringBuilder(1024);
-		client.doLog(new File[] { filePath }, start, end, this.stopOnCopy, this.discoverChangedPaths, this.limit, new ISVNLogEntryHandler()
+		if (this.url == null)
+		{
+			File filePath = new File(this.path);
+			this.getTask().log("log " + filePath.getCanonicalPath() + " " + start.toString() + ":" + end.toString());
+			client.doLog(new File[] { filePath }, start, end, this.stopOnCopy, this.discoverChangedPaths, this.limit, this.getLogEntryHandler(logBuffer));
+		}
+		else
+		{
+			String path = (this.path == null || "".equals(this.path)) ? "/" : this.path;
+			this.getTask().log("log " + this.url + (("/".equals(path)) ? "" : path) + " " + start.toString() + ":" + end.toString());
+			client.doLog(SVNURL.parseURIDecoded(this.url), new String[] { path }, start, start, end, this.stopOnCopy, this.discoverChangedPaths, this.limit, this.getLogEntryHandler(logBuffer));
+		}
+
+		logBuffer.append(ITEM_SEPARATOR + LINE_SEPARATOR);
+
+		this.getProject().setProperty(this.logProperty, logBuffer.toString());
+	}
+
+	/** */
+	private ISVNLogEntryHandler getLogEntryHandler(final StringBuilder logBuffer)
+	{
+		return new ISVNLogEntryHandler()
 		{
 			@Override
 			public void handleLogEntry(SVNLogEntry entry) throws SVNException
@@ -76,19 +96,15 @@ public class Log extends Command
 		            }
 				}
 			}
-		});
-
-		logBuffer.append(ITEM_SEPARATOR + LINE_SEPARATOR);
-
-		this.getProject().setProperty(this.logProperty, logBuffer.toString());
+		};
 	}
 
 	/** */
 	@Override
 	protected void validateAttributes() throws Exception
 	{
-		if (this.path == null)
-			throw new NullPointerException("path cannot be null");
+		if (this.url == null && this.path == null)
+			throw new NullPointerException("must specify path or url");
 
 		if (this.logProperty == null)
 			this.logProperty = SVN_LOG;
@@ -101,6 +117,14 @@ public class Log extends Command
 
 		if (this.limit < 0)
 			this.limit = 0;
+	}
+
+	/**
+	 * the svn url to use (as opposed to the path of a working copy)
+	 */
+	public void setUrl(String url)
+	{
+		this.url = url;
 	}
 
 	/**
