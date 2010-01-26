@@ -44,6 +44,7 @@ public class Log extends Command
 	private long limit;
 	private boolean stopOnCopy;
 	private boolean discoverChangedPaths;
+	private boolean includeMergedRevisions;
 
 	/** */
 	@Override
@@ -58,13 +59,13 @@ public class Log extends Command
 		{
 			File filePath = new File(this.path);
 			this.getTask().log("log " + filePath.getCanonicalPath() + " " + start.toString() + ":" + end.toString());
-			client.doLog(new File[] { filePath }, start, end, this.stopOnCopy, this.discoverChangedPaths, this.limit, this.getLogEntryHandler(logBuffer));
+			client.doLog(new File[] { filePath }, end, start, end, this.stopOnCopy, this.discoverChangedPaths, this.includeMergedRevisions, this.limit, new String[] { }, this.getLogEntryHandler(logBuffer));
 		}
 		else
 		{
 			String path = (this.path == null || "".equals(this.path)) ? "/" : this.path;
 			this.getTask().log("log " + this.url + (("/".equals(path)) ? "" : path) + " " + start.toString() + ":" + end.toString());
-			client.doLog(SVNURL.parseURIDecoded(this.url), new String[] { path }, start, start, end, this.stopOnCopy, this.discoverChangedPaths, this.limit, this.getLogEntryHandler(logBuffer));
+			client.doLog(SVNURL.parseURIDecoded(this.url), new String[] { path }, end, start, end, this.stopOnCopy, this.discoverChangedPaths, this.includeMergedRevisions, this.limit, new String[] { }, this.getLogEntryHandler(logBuffer));
 		}
 
 		logBuffer.append(ITEM_SEPARATOR + LINE_SEPARATOR);
@@ -89,11 +90,11 @@ public class Log extends Command
 				if (Log.this.discoverChangedPaths)
 				{
 					logBuffer.append("Changed paths:").append(LINE_SEPARATOR);
-		            for (Iterator<?> paths = entry.getChangedPaths().values().iterator(); paths.hasNext(); )
-		            {
-		                SVNLogEntryPath path = (SVNLogEntryPath) paths.next();
-		                logBuffer.append(path.toString()).append(LINE_SEPARATOR);
-		            }
+					for (Iterator<?> paths = entry.getChangedPaths().values().iterator(); paths.hasNext(); )
+					{
+						SVNLogEntryPath path = (SVNLogEntryPath) paths.next();
+						logBuffer.append(path.toString()).append(LINE_SEPARATOR);
+					}
 				}
 			}
 		};
@@ -174,6 +175,14 @@ public class Log extends Command
 	public void setDiscoverChangedPaths(boolean discoverChangedPaths)
 	{
 		this.discoverChangedPaths = discoverChangedPaths;
+	}
+
+	/**
+	 * if true logs will include changes merged in from elsewhere
+	 */
+	public void setIncludeMergedRevisions(boolean includeMergedRevisions)
+	{
+		this.includeMergedRevisions = includeMergedRevisions;
 	}
 
 	/**
