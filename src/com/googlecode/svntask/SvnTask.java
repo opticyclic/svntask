@@ -3,6 +3,7 @@ package com.googlecode.svntask;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.googlecode.svntask.command.Checkout;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
@@ -80,6 +81,12 @@ public class SvnTask extends Task
 	public void addUpdate(Update update)
 	{
 		this.addCommand(update);
+	}
+
+	/** */
+	public void addCheckout(Checkout checkout)
+	{
+		this.addCommand(checkout);
 	}
 
 	/** */
