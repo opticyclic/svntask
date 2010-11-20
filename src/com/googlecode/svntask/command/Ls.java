@@ -51,7 +51,7 @@ public class Ls extends Command
 				repository.setAuthenticationManager(authManager);
 			}
 
-			Collection<SVNDirEntry> lsResults = repository.getDir(this.path, this.revision.getNumber() , null, (Collection) null);
+			Collection<SVNDirEntry> lsResults = repository.getDir(this.path, this.revision.getNumber() , null, (Collection<?>) null);
 
 			StringBuilder sb = new StringBuilder();
 
