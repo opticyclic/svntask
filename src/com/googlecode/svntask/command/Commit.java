@@ -4,7 +4,10 @@ import java.io.File;
 
 import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDepth;
+import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
+import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNCommitClient;
+import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 import com.googlecode.svntask.Command;
 
@@ -26,6 +29,8 @@ public class Commit extends Command
 	private String commitMessage = "commit by svntask";
 	private boolean force = true;
 	private SVNDepth depth = SVNDepth.INFINITY;
+	private String user;
+	private String password;
 
 	/** */
 	@Override
@@ -34,11 +39,17 @@ public class Commit extends Command
 		File[] filePaths = new File[1];
 		filePaths[0] = new File(this.path);
 
-		this.getTask().log("commit " + filePaths[0].getCanonicalPath());
+		this.getTask().log("commit " + filePaths[0].getCanonicalPath());		
 
+		SVNClientManager cm = this.getTask().getSvnClient();
+		
+		if (this.user != null && this.password != null){
+			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(this.user, this.password);
+			cm.setAuthenticationManager(authManager);
+		} 			
+				
 		// Get the commit client
-		SVNCommitClient commitClient = this.getTask().getSvnClient().getCommitClient();
-
+		SVNCommitClient commitClient = cm.getCommitClient();
 		// Execute SVN commit
 		SVNCommitInfo info = commitClient.doCommit(filePaths, this.keepLocks, this.commitMessage, null, null, true, this.force, this.depth);
 
@@ -86,4 +97,17 @@ public class Commit extends Command
 	{
 		this.depth = SVNDepth.fromString(depth);
 	}
+	
+	/** */
+	public void setUsername(String user)
+	{
+		this.user = user;
+	}
+	
+	/** */
+	public void setPassword(String pass)
+	{
+		this.password = pass;
+	}
+
 }
