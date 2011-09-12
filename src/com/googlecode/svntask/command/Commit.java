@@ -43,7 +43,7 @@ public class Commit extends Command
 
 		SVNClientManager cm = this.getTask().getSvnClient();
 		
-		if (this.user != null && this.password != null){
+		if (this.user != null && this.password != null) {
 			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(this.user, this.password);
 			cm.setAuthenticationManager(authManager);
 		} 			

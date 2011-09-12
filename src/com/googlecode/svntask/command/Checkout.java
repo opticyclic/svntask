@@ -5,8 +5,11 @@ import org.apache.tools.ant.BuildException;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
+import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
+import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
+import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 import java.io.File;
 
@@ -22,20 +25,29 @@ public class Checkout extends Command
 	private SVNRevision revision = SVNRevision.HEAD;
 	private SVNDepth depth = SVNDepth.INFINITY;
 	private boolean force = false;
+	private String user;
+	private String password;
 
 	private String revisionProperty;
 
 	@Override
 	public void execute() throws Exception
 	{
-		// Get the Update Client
-		SVNUpdateClient client = this.getTask().getSvnClient().getUpdateClient();
-
 		SVNURL svnurl = SVNURL.parseURIDecoded(url);
 
 		this.getTask().log("checkout " + url + " " + path);
-
-		long r = client.doCheckout(svnurl, path, pegRevision, revision, depth, force);
+		
+		SVNClientManager cm = this.getTask().getSvnClient();
+		
+		if (this.user != null && this.password != null) {
+			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(this.user, this.password);
+			cm.setAuthenticationManager(authManager);
+		}
+		
+		// Get the Update Client
+		SVNUpdateClient updateClient = cm.getUpdateClient();
+		
+		long r = updateClient.doCheckout(svnurl, path, pegRevision, revision, depth, force);
 		this.getProject().setProperty(this.revisionProperty, new Long(r).toString());
 	}
 	@Override
@@ -83,4 +95,17 @@ public class Checkout extends Command
 	{
 		this.revisionProperty = revisionProperty;
 	}
+	
+	/** */
+	public void setUsername(String user)
+	{
+		this.user = user;
+	}
+	
+	/** */
+	public void setPassword(String pass)
+	{
+		this.password = pass;
+	}
+	
 }
