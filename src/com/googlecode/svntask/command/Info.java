@@ -2,6 +2,7 @@ package com.googlecode.svntask.command;
 
 import java.io.File;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.tmatesoft.svn.core.SVNURL;
@@ -22,6 +23,7 @@ import com.googlecode.svntask.Command;
  *  authorProperty = svn.info.author
  *  committedDateProperty = svn.info.committedDate
  *  committedRevision = svn.info.committedRevision
+ *  committedDateFormatPattern
  *
  * @author jonstevens
  */
@@ -35,6 +37,7 @@ public class Info extends Command
 	public static final String SVN_INFO_COMMITTED_REVISION = "svn.info.committedRevision";
 
 	private String path;
+	private String committedDateFormatPattern;
 	private String revisionProperty;
 	private String urlProperty;
 	private String repositoryRootUrlProperty;
@@ -47,7 +50,12 @@ public class Info extends Command
 	public void execute() throws Exception
 	{
 		File filePath = new File(this.path);
-
+		DateFormat format = null;
+		if (committedDateFormatPattern != null) {
+			format = new SimpleDateFormat(committedDateFormatPattern);
+		} else {
+			format = DateFormat.getInstance();
+		}
 		this.getTask().log("info " + filePath.getCanonicalPath());
 
 		// Set the default property in ant in case we have an exception below.
@@ -72,7 +80,7 @@ public class Info extends Command
 		this.getProject().setProperty(this.urlProperty, url.toDecodedString());
 		this.getProject().setProperty(this.repositoryRootUrlProperty, repositoryRootUrl.toDecodedString());
 		this.getProject().setProperty(this.authorProperty, author);
-		this.getProject().setProperty(this.committedDateProperty, DateFormat.getInstance().format(committedDate));
+		this.getProject().setProperty(this.committedDateProperty, format.format(committedDate));
 		this.getProject().setProperty(this.committedRevisionProperty, new Long(committedRevision.getNumber()).toString());
 	}
 
@@ -102,6 +110,14 @@ public class Info extends Command
 			this.committedRevisionProperty = SVN_INFO_COMMITTED_REVISION;
 	}
 
+	/**
+	 * the date format for the committed date
+	 */
+	public void setCommittedDateFormatPattern(String dateFormat)
+	{
+		this.committedDateFormatPattern = dateFormat;
+	}
+	
 	/**
 	 * the path to the file
 	 */
