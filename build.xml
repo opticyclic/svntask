@@ -1,40 +1,41 @@
 <?xml version="1.0"?>
 
-<!--
-	$Id: build.xml 25 2009-06-25 22:58:39Z latchkey $
-	$URL: https://svntask.googlecode.com/svn/trunk/build.xml $
--->
-<project name="svntask" default="compile" basedir=".">
-
-	<property file="user.properties" />
-	<property file="build.properties" />
-	<property file="jar.properties" />
-
-	<property name="base.dir" location="${basedir}" />
-
-	<property name="build.dir" location="${basedir}/target" />
+<project name="svntask" default="dist" basedir=".">
+ 
+  <!--***************** Generic properties *****************-->
+ 	<property name="ant.build.javac.target" value="1.5" />
+ 	<property name="ant.build.javac.source" value="1.5" />
+  
+  <property name="build.debug" value="true" />
+ 	<property name="build.deprecation" value="true" />  
+  <!--********************************************************-->
+  
+  <property name="version" value="1.0.9"/>
+  <property name="dist.name" value="${ant.project.name}-${version}"/>
+  
+  <property name="src.dir" location="${basedir}/src" />
+  <property name="build.dir" location="${basedir}/target" />
+  <property name="build.classes.dir" location="${build.dir}/classes" />
 	<property name="build.javadoc.dir" location="${build.dir}/doc" />
+  
+  <property name="build.dist.dir" location="${build.dir}/${dist.name}"/>
+	<property name="build.dist.zip" location="${build.dir}/${dist.name}.zip"/>
 
-	<property name="build.debug" value="true" />
-	<property name="build.deprecation" value="true" />
 
-	<property name="ant.build.javac.target" value="1.5" />
-	<property name="ant.build.javac.source" value="1.5" />
-
-	<!-- ******************************************************** -->
+	<!--********************************************************-->
 	<path id="svntask.classpath">
-		<fileset dir="${base.dir}/lib">
+		<fileset dir="${basedir}/lib">
 			<include name="*.jar"/>
 		</fileset>
 	</path>
 	<!-- ******************************************************** -->
 
 	<target name="javac" depends="init">
-		<mkdir dir="${build.dir}/classes"/>
+		<mkdir dir="${build.classes.dir}"/>
 
 		<javac
-			srcdir="${base.dir}/src"
-			destdir="${build.dir}/classes"
+			srcdir="${src.dir}"
+			destdir="${build.classes.dir}"
 			includeAntRuntime="false"
 			debug="${build.debug}"
 			source="${ant.build.javac.source}"
@@ -44,12 +45,13 @@
 			<classpath refid="svntask.classpath"/>
 		</javac>
 
-		<copy file="${base.dir}/src/svntask.xml" todir="${build.dir}/classes/com/googlecode/svntask/" />
+    <!--TODO: This should be in the right place in a resources dir in the first place-->
+		<copy file="${src.dir}/svntask.xml" todir="${build.classes.dir}/com/googlecode/svntask/" />
 	</target>
 
-	<target name="jar" depends="javac, version">
+	<target name="jar" depends="javac">
 		<jar jarfile="${build.dir}/svntask.jar">
-			<fileset dir="${build.dir}/classes" />
+			<fileset dir="${build.classes.dir}" />
 
 			<manifest>
 				<attribute name="Specification-Version" value="${version}" />
@@ -71,54 +73,31 @@
 			Windowtitle="svntask Javadoc"
 		>
 			<classpath refid="svntask.classpath" />
-			<fileset dir="${base.dir}/src">
+			<fileset dir="${src.dir}">
 				<exclude name="**/*.xml" />
 			</fileset>
 			<group title="svntask" packages="com.googlecode.svntask*"/>
 			<doctitle><![CDATA[<h1>svntask</h1>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &#169; ${YEAR} Jon Scott Stevens, Christoph Polcin. All Rights Reserved. Build version: ${version}</i>]]></bottom>
+			<bottom><![CDATA[<i>Copyright &#169; ${YEAR} Jon Scott Stevens, Christoph Polcin, opticyclic. All Rights Reserved. Build version: ${version}</i>]]></bottom>
 		</javadoc>
 	</target>
 
-	<target name="compile" depends="init, jar">
-	</target>
-
-	<target name="version">
-		<typedef resource="com/googlecode/svntask/svntask.xml">
-			<classpath>
-				<fileset dir="${base.dir}/lib">
-					<include name="svnkit.jar"/>
-				</fileset>
-				<pathelement path="${build.dir}/classes/"/>
-			</classpath>
-		</typedef>
-		<!-- <svn><info path="." revisionProperty="revisionVersion" /></svn> -->
-		<property name="version" value="${revisionVersion}" />
-	</target>
-
 	<target name="init">
-		<tstamp/>
 		<tstamp>
 			<format property="YEAR" pattern="yyyy" />
 		</tstamp>
 	</target>
 
 	<target name="clean">
+    <!--Prevent a delete failure if the build dir doesn't exist-->
+    <mkdir dir="${build.dir}"/>
+    <!--Do the actual delete-->
 		<delete includeemptydirs="true">
 			<fileset dir="${build.dir}" includes="**/*"/>
 		</delete>
 	</target>
 
-	<target name="init-dist">
-		<!-- <input addproperty="version" message="Version number?" /> -->
-		<property name="version" value="${revisionVersion}" />
-		<property name="dist.name" value="${name}-${version}" />
-	</target>
-
-	<target name="dist" depends="init-dist, clean, compile, javadoc">
-		<property name="build.dist.dir" location="${build.dir}/${ant.project.name}-${version}"/>
-		<property name="build.dist.zip" location="${build.dir}/${ant.project.name}-${version}.zip"/>
-
+	<target name="dist" depends="clean, init, jar, javadoc">
 		<copy todir="${build.dist.dir}">
 			<fileset dir="${build.dir}">
 				<include name="javadoc/**" />
@@ -144,7 +123,7 @@
 		</copy>
 
 		<copy todir="${build.dist.dir}/src">
-			<fileset dir="${base.dir}/src">
+			<fileset dir="${src.dir}">
 				<include name="**" />
 			</fileset>
 		</copy>
