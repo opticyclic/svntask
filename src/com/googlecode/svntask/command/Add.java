@@ -1,7 +1,10 @@
 package com.googlecode.svntask.command;
 
 import java.io.File;
+import java.util.Vector;
 
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.types.FileSet;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
 
@@ -15,36 +18,55 @@ import com.googlecode.svntask.Command;
  *
  * @author darren (darren@bizo.com)
  * @author Jon Stevens
+ * @author christoph polcin (christoph-polcin.com)
  */
 public class Add extends Command
 {
 	private String path;
 	private boolean force = true;
-	private boolean mkdir = false;
+	private boolean mkdir;
 	private boolean climbUnversionedParents = true;
 	private SVNDepth depth = SVNDepth.INFINITY;
-	private boolean includeIgnored = true;
+	private boolean includeIgnored;
 	private boolean makeParents = true;
+	private Vector<FileSet> filesets = new Vector<FileSet>();
+
 
 	/** */
 	@Override
 	public void execute() throws Exception
 	{
-		File filePath = new File(this.path);
-
-		this.getTask().log("add " + filePath.getCanonicalPath());
-
+		File file;
 		SVNWCClient wcClient = this.getTask().getSvnClient().getWCClient();
-		wcClient.doAdd(filePath, this.force, this.mkdir, this.climbUnversionedParents, this.depth, this.includeIgnored,
-				this.makeParents);
+
+		if(path != null){
+			file = new File(path).getCanonicalFile();
+
+			this.getTask().log("add " + file.getPath());
+			wcClient.doAdd(file, this.force, this.mkdir, this.climbUnversionedParents, this.depth, this.includeIgnored, this.makeParents);
+		} else {
+			DirectoryScanner ds;
+			File dir;
+			String[] filesInSet;
+			for (FileSet fileset : filesets) {
+				ds = fileset.getDirectoryScanner(getProject());
+				dir = ds.getBasedir();
+				filesInSet = ds.getIncludedFiles();
+				for (String filename : filesInSet) {
+					file = new File(dir,filename).getCanonicalFile();
+					this.getTask().log("add " + file.getCanonicalPath());
+					wcClient.doAdd(file, this.force, this.mkdir, this.climbUnversionedParents, this.depth, this.includeIgnored, this.makeParents);
+				}
+			}
+		}
 	}
 
 	/** */
 	@Override
 	protected void validateAttributes() throws Exception
 	{
-		if (this.path == null)
-			throw new NullPointerException("path cannot be null");
+		if (this.filesets.size() == 0 && (this.path == null || this.path.length() == 0) )
+			throw new NullPointerException("add task: need a path or fileset");
 	}
 
 	/** */
@@ -87,5 +109,10 @@ public class Add extends Command
 	public void setMakeParents(boolean makeParents)
 	{
 		this.makeParents = makeParents;
+	}
+
+	public void addFileSet(FileSet fileset){
+		if(!filesets.contains(fileset))
+			filesets.add(fileset);
 	}
 }
