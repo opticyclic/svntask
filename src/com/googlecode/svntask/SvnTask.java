@@ -9,6 +9,7 @@ import com.googlecode.svntask.command.Cleanup;
 import com.googlecode.svntask.command.Commit;
 import com.googlecode.svntask.command.Copy;
 import com.googlecode.svntask.command.Delete;
+import com.googlecode.svntask.command.Export;
 import com.googlecode.svntask.command.Info;
 import com.googlecode.svntask.command.Log;
 import com.googlecode.svntask.command.Ls;
@@ -132,6 +133,12 @@ public class SvnTask extends Task
 	public void addCheckout(Checkout checkout)
 	{
 		this.addCommand(checkout);
+	}
+
+	/** */
+	public void addExport(Export export)
+	{
+		this.addCommand(export);
 	}
 
 	/** */
