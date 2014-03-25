@@ -14,6 +14,7 @@ Changelog
 ### 1.1.0 ###
 
 - Added Export task
+- Bundled with svnkit-1.7.12
 
 ### 1.0.9 ###
 - bundled with svnkit-1.7.5-v1
