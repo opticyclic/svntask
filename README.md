@@ -19,6 +19,7 @@ Available commands
 - Add
 - Checkout
 - Commit
+- Export
 - Info
 - Log
 - Ls
@@ -96,6 +97,19 @@ Commands
           </fileset>
         </delete>
       </svn>
+
+
+# export
+      <target name="export">
+        <svn>
+          <export workingcopy="/path/to/workingcopy"
+                  exportpath="/path/to/exportdir"/>
+        </svn>
+        <svn username="guest" password="">
+          <export url="http://host/svn/repo"
+                  exportpath="/path/to/exportdir"/>
+        </svn>
+      </target>
 
 
 # mkdir
