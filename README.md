@@ -1,3 +1,5 @@
+# svntask #
+
 This is a fork of [http://code.google.com/p/svntask/](http://code.google.com/p/svntask/)
 and also takes some extra commands from [https://github.com/chripo/svntask/ ](https://github.com/chripo/svntask/ )
 
@@ -5,10 +7,15 @@ It is a simple wrapper around [svnkit](http://svnkit.com/)
 
 Development on the original project has ended so this was created to provide a way of working with svn 1.7 via ant until [SvnAnt](http://subclipse.tigris.org/svnant.html) is updated.
 
-Version 1.0.9
+Version 1.1.0
 
-Modification
-============
+Changelog
+=========
+### 1.1.0 ###
+
+- Added Export task
+
+### 1.0.9 ###
 - bundled with svnkit-1.7.5-v1
 - update Add command with fileset support (from [https://github.com/chripo/svntask/](https://github.com/chripo/svntask/))
 - add svntask Auth support                (from [https://github.com/chripo/svntask/](https://github.com/chripo/svntask/))
