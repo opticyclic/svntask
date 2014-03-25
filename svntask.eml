@@ -3,10 +3,10 @@
 	<output-test url="file://$MODULE_DIR$/out/test/svntask"/>
 	<exclude-output/>
 	<contentEntry url="file://$MODULE_DIR$"/>
-	<lib name="svnkit.jar" scope="COMPILE">
-		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/svn1.6/svnkit-1.3.4.jar!/"/>
+	<lib name="svnkit-1.3.8.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/svn1.6/svnkit-1.3.8.jar!/"/>
 	</lib>
-	<lib name="ant.jar" scope="COMPILE">
+	<lib name="ant-1.7.0.jar" scope="COMPILE">
 		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/ant-1.7.0.jar!/"/>
 	</lib>
 </component>
