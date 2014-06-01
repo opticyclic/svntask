@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Svntask by opticyclic</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Svntask</h1>
+        <h2>Fork of svntask http://code.google.com/p/svntask/ a simpler svnant</h2>
+        <a href="https://github.com/opticyclic/svntask" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="svntask" class="anchor" href="#svntask"><span class="octicon octicon-link"></span></a>svntask</h1>
+
+<p>This is a fork of <a href="http://code.google.com/p/svntask/">http://code.google.com/p/svntask/</a>
+and also takes some extra commands from <a href="https://github.com/chripo/svntask/">https://github.com/chripo/svntask/ </a></p>
+
+<p>It is a simple wrapper around <a href="http://svnkit.com/">svnkit</a></p>
+
+<p>Development on the original project has ended so this was created to provide a way of working with svn 1.7 via ant until <a href="http://subclipse.tigris.org/svnant.html">SvnAnt</a> is updated.</p>
+
+<p>Version 1.1.0</p>
+
+<h1>
+<a name="changelog" class="anchor" href="#changelog"><span class="octicon octicon-link"></span></a>Changelog</h1>
+
+<h3>
+<a name="110" class="anchor" href="#110"><span class="octicon octicon-link"></span></a>1.1.0</h3>
+
+<ul>
+<li>Added Export task</li>
+<li>Bundled with svnkit-1.7.12</li>
+</ul><h3>
+<a name="109" class="anchor" href="#109"><span class="octicon octicon-link"></span></a>1.0.9</h3>
+
+<ul>
+<li>bundled with svnkit-1.7.5-v1</li>
+<li>update Add command with fileset support (from <a href="https://github.com/chripo/svntask/">https://github.com/chripo/svntask/</a>)</li>
+<li>add svntask Auth support                (from <a href="https://github.com/chripo/svntask/">https://github.com/chripo/svntask/</a>)</li>
+<li>added new commands                      (from <a href="https://github.com/chripo/svntask/">https://github.com/chripo/svntask/</a>)</li>
+</ul><h1>
+<a name="available-commands" class="anchor" href="#available-commands"><span class="octicon octicon-link"></span></a>Available commands</h1>
+
+<ul>
+<li>Add</li>
+<li>Checkout</li>
+<li>Commit</li>
+<li>Export</li>
+<li>Info</li>
+<li>Log</li>
+<li>Ls</li>
+<li>Status</li>
+<li>Switch</li>
+<li>Update</li>
+<li>Cleanup</li>
+<li>Copy</li>
+<li>Delete</li>
+<li>Mkdir</li>
+<li>Unlock</li>
+</ul><h1>
+<a name="install" class="anchor" href="#install"><span class="octicon octicon-link"></span></a>Install</h1>
+
+<p>Unzip the dist to a directory in your project.
+Unfortunately svnkit 1.7 comes with extra dependencies so it is no longer just one jar.</p>
+
+<h2>
+<a name="taskdef" class="anchor" href="#taskdef"><span class="octicon octicon-link"></span></a>TaskDef</h2>
+
+<pre><code>  &lt;path id="svnant.classpth"&gt;
+    &lt;fileset dir="lib/build/svnant"&gt;
+      &lt;include name="*.jar"/&gt;
+    &lt;/fileset&gt;
+  &lt;/path&gt;
+  &lt;taskdef name="svn" classname="com.googlecode.svntask.SvnTask" classpathref="svnant.classpth"/&gt;
+</code></pre>
+
+<h2>
+<a name="authentication" class="anchor" href="#authentication"><span class="octicon octicon-link"></span></a>Authentication</h2>
+
+<pre><code>&lt;svn username="user"  password="password" &gt;
+  ... commands ...
+&lt;/svn&gt;
+</code></pre>
+
+<h2>
+<a name="commands" class="anchor" href="#commands"><span class="octicon octicon-link"></span></a>Commands</h2>
+
+<h1>
+<a name="cleanup" class="anchor" href="#cleanup"><span class="octicon octicon-link"></span></a>cleanup</h1>
+
+<pre><code>  &lt;svn&gt;
+    &lt;cleanup path="${project.src}" deleteWCProperties="false"/&gt;
+  &lt;/svn&gt;
+</code></pre>
+
+<h1>
+<a name="copy" class="anchor" href="#copy"><span class="octicon octicon-link"></span></a>copy</h1>
+
+<pre><code>  &lt;svn&gt;
+    &lt;copy
+      failOnDstExists="true"
+      move="false"
+      src="${from.file / from.url}"
+      dst="${to.file / to.url}"
+      commitMessage="copy by svntask"
+    /&gt;
+  &lt;/svn&gt;
+</code></pre>
+
+<h1>
+<a name="delete" class="anchor" href="#delete"><span class="octicon octicon-link"></span></a>delete</h1>
+
+<pre><code>  &lt;svn&gt;
+    &lt;delete
+      force="true"
+      deleteFiles="false"
+      includeDirs="true"
+      dryRun="false"
+      path="/path/to/delete"
+    /&gt;
+
+    &lt;delete
+      force="true"
+      deleteFiles="false"
+      includeDirs="true"
+      dryRun="false"&gt;
+      &lt;fileset&gt;
+        ...
+      &lt;/fileset&gt;
+    &lt;/delete&gt;
+  &lt;/svn&gt;
+</code></pre>
+
+<h1>
+<a name="export" class="anchor" href="#export"><span class="octicon octicon-link"></span></a>export</h1>
+
+<pre><code>  &lt;target name="export"&gt;
+    &lt;svn&gt;
+      &lt;export workingcopy="/path/to/workingcopy"
+              exportpath="/path/to/exportdir"/&gt;
+    &lt;/svn&gt;
+    &lt;svn username="guest" password=""&gt;
+      &lt;export url="http://host/svn/repo"
+              exportpath="/path/to/exportdir"/&gt;
+    &lt;/svn&gt;
+  &lt;/target&gt;
+</code></pre>
+
+<h1>
+<a name="mkdir" class="anchor" href="#mkdir"><span class="octicon octicon-link"></span></a>mkdir</h1>
+
+<pre><code>  &lt;svn&gt;
+    &lt;mkdir
+      makeParents="true"
+      path="path/to/create"
+      commitMessage="mkdir by svntask"
+    /&gt;
+  &lt;/svn&gt;
+</code></pre>
+
+<h1>
+<a name="unlock" class="anchor" href="#unlock"><span class="octicon octicon-link"></span></a>unlock</h1>
+
+<pre><code>  &lt;svn&gt;
+    &lt;unlock
+      breakLock="true"
+      includeDirs="true"&gt;
+        &lt;fileset&gt;
+          ...
+        &lt;/fileset&gt;
+    &lt;/unlock&gt;
+  &lt;/svn&gt;
+</code></pre>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/opticyclic/svntask/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/opticyclic/svntask/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/opticyclic/svntask"></a> is maintained by <a href="https://github.com/opticyclic">opticyclic</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
