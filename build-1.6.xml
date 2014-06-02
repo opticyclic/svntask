@@ -103,34 +103,13 @@
 	<target name="dist" depends="clean, init, jar, javadoc">
 		<copy todir="${build.dist.dir}">
 			<fileset dir="${build.dir}">
-				<include name="javadoc/**" />
-			</fileset>
-
-			<fileset dir=".">
-				<include name="README*" />
-				<include name="LICENSE.txt" />
-				<include name="build.xml" />
+				<include name="*.jar" />
 			</fileset>
 		</copy>
 
 		<copy todir="${build.dist.dir}">
-			<fileset dir="${build.dir}">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
-
-		<copy todir="${build.dist.dir}/lib">
-			<fileset dir="lib">
-				<include name="ant*.jar" />
-			</fileset>
       <fileset dir="lib/svn1.6">
 				<include name="*.jar" />
-			</fileset>
-		</copy>
-
-		<copy todir="${build.dist.dir}/src">
-			<fileset dir="${src.dir}">
-				<include name="**" />
 			</fileset>
 		</copy>
 
