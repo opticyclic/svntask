@@ -2,6 +2,10 @@
 
 <project name="svntask-parent" default="dist" basedir=".">
 
+  <target name="clean">
+    <delete dir="target"/>
+  </target>
+
   <!--TODO: Get rid of this copy/paste and use variables in a single file instead-->
   <target name="dist">
     <ant antfile="build-1.6.xml" target="dist"/>
