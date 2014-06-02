@@ -5,12 +5,16 @@ and also takes some extra commands from [https://github.com/chripo/svntask/ ](ht
 
 It is a simple wrapper around [svnkit](http://svnkit.com/)
 
-Development on the original project has ended so this was created to provide a way of working with svn 1.7 via ant until [SvnAnt](http://subclipse.tigris.org/svnant.html) is updated.
+Development on the original project has ended so this was created to provide a way of working with svn 1.7 (and above) via ant until [SvnAnt](http://subclipse.tigris.org/svnant.html) is updated.
 
-Version 1.1.0
+Version 1.1.1
 
 Changelog
 =========
+### 1.1.1 ###
+
+- Bundled with svnkit-1.8.5
+
 ### 1.1.0 ###
 
 - Added Export task
@@ -43,7 +47,7 @@ Available commands
 Install
 =======
 Unzip the dist to a directory in your project.
-Unfortunately svnkit 1.7 comes with extra dependencies so it is no longer just one jar.
+Unfortunately svnkit 1.7 (and above) comes with extra dependencies so it is no longer just one jar.
 
 
 

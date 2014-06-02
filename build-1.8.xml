@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+
+<project name="svntask-1.8" default="dist" basedir=".">
+ 
+  <!--***************** Generic properties *****************-->
+ 	<property name="ant.build.javac.target" value="1.5" />
+ 	<property name="ant.build.javac.source" value="1.5" />
+  
+  <property name="build.debug" value="true" />
+ 	<property name="build.deprecation" value="true" />  
+  <!--********************************************************-->
+  
+  <property name="version" value="1.1.0"/>
+  <property name="dist.name" value="${ant.project.name}-${version}"/>
+  
+  <property name="src.dir" location="src" />
+  <property name="build.dir" location="target/1.8" />
+  <property name="build.classes.dir" location="${build.dir}/classes" />
+	<property name="build.javadoc.dir" location="${build.dir}/doc" />
+  
+  <property name="build.dist.dir" location="${build.dir}/${dist.name}"/>
+	<property name="build.dist.zip" location="${build.dir}/${dist.name}.zip"/>
+
+
+	<!--********************************************************-->
+	<path id="svntask.classpath">
+		<fileset dir="lib">
+			<include name="ant*.jar"/>
+		</fileset>
+		<fileset dir="lib/svn1.8">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	<!-- ******************************************************** -->
+
+	<target name="javac" depends="init">
+		<mkdir dir="${build.classes.dir}"/>
+
+		<javac
+			srcdir="${src.dir}"
+			destdir="${build.classes.dir}"
+			includeAntRuntime="false"
+			debug="${build.debug}"
+			source="${ant.build.javac.source}"
+			target="${ant.build.javac.target}"
+			deprecation="${build.deprecation}">
+
+			<classpath refid="svntask.classpath"/>
+		</javac>
+
+    <!--TODO: This should be in the right place in a resources dir in the first place-->
+		<copy file="${src.dir}/svntask.xml" todir="${build.classes.dir}/com/googlecode/svntask/" />
+	</target>
+
+	<target name="jar" depends="javac">
+		<jar jarfile="${build.dir}/svntask-${version}.jar">
+			<fileset dir="${build.classes.dir}" />
+
+			<manifest>
+				<attribute name="Specification-Version" value="${version}" />
+				<attribute name="Implementation-Version" value="${TODAY}" />
+				<attribute name="Main-Class" value="com.googlecode.svntask.Version" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="javadoc" depends="init">
+		<property name="javadoc.dir" location="${build.dir}/javadoc" />
+		<mkdir dir="${javadoc.dir}"/>
+
+		<javadoc
+			destdir="${javadoc.dir}"
+			packagenames="*"
+			author="true"
+			version="true"
+			Windowtitle="svntask Javadoc"
+		>
+			<classpath refid="svntask.classpath" />
+			<fileset dir="${src.dir}">
+				<exclude name="**/*.xml" />
+			</fileset>
+			<group title="svntask" packages="com.googlecode.svntask*"/>
+			<doctitle><![CDATA[<h1>svntask</h1>]]></doctitle>
+			<bottom><![CDATA[<i>Copyright &#169; ${YEAR} Jon Scott Stevens, Christoph Polcin, opticyclic. All Rights Reserved. Build version: ${version}</i>]]></bottom>
+		</javadoc>
+	</target>
+
+	<target name="init">
+		<tstamp>
+			<format property="YEAR" pattern="yyyy" />
+		</tstamp>
+	</target>
+
+	<target name="clean">
+    <!--Prevent a delete failure if the build dir doesn't exist-->
+    <mkdir dir="${build.dir}"/>
+    <!--Do the actual delete-->
+		<delete includeemptydirs="true">
+			<fileset dir="${build.dir}" includes="**/*"/>
+		</delete>
+	</target>
+
+	<target name="dist" depends="clean, init, jar, javadoc">
+		<copy todir="${build.dist.dir}">
+			<fileset dir="${build.dir}">
+				<include name="javadoc/**" />
+			</fileset>
+
+			<fileset dir=".">
+				<include name="README*" />
+				<include name="LICENSE.txt" />
+				<include name="build.xml" />
+			</fileset>
+		</copy>
+
+		<copy todir="${build.dist.dir}">
+			<fileset dir="${build.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${build.dist.dir}/lib">
+			<fileset dir="lib">
+				<include name="ant*.jar" />
+			</fileset>
+      <fileset dir="lib/svn1.8">
+    			<include name="*.jar"/>
+    	</fileset>
+		</copy>
+
+		<copy todir="${build.dist.dir}/src">
+			<fileset dir="${src.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+		<dirname property="build.dist.dir.dirname" file="${build.dist.dir}" />
+		<basename property="build.dist.dir.basename" file="${build.dist.dir}" />
+
+		<zip zipfile="${build.dist.zip}" basedir="${build.dist.dir.dirname}">
+			<include name="${build.dist.dir.basename}/**" />
+		</zip>
+	</target>
+
+</project>

@@ -6,6 +6,7 @@
   <target name="dist">
     <ant antfile="build-1.6.xml" target="dist"/>
     <ant antfile="build-1.7.xml" target="dist"/>
+    <ant antfile="build-1.8.xml" target="dist"/>
   </target>
 
 </project>
