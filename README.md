@@ -13,6 +13,7 @@ Changelog
 =========
 ### 1.1.1 ###
 
+- Added Diff task
 - Bundled with svnkit-1.8.5
 
 ### 1.1.0 ###
@@ -31,6 +32,7 @@ Available commands
 - Add
 - Checkout
 - Commit
+- Diff
 - Export
 - Info
 - Log
@@ -120,6 +122,15 @@ Commands
         <svn username="guest" password="">
           <export url="http://host/svn/repo"
                   exportpath="/path/to/exportdir"/>
+        </svn>
+      </target>
+
+
+# diff
+      <target name="diff">
+        <svn username="guest" password="">
+          <diff workingcopy="/path/to/workingcopy"
+                  outfilename="svn.patch"/>
         </svn>
       </target>
 
